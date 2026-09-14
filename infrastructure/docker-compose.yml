@@ -1,0 +1,108 @@
+version: "3.9"
+
+services:
+  sensor-simulator:
+   
+    build: ../services/sensor-simulator
+    container_name: campus-sensor-simulator
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongodb
+      - sensor-ingestion
+    environment:
+      MONGO_URL: mongodb://mongodb:27017
+      INGESTION_URL: http://sensor-ingestion:3002/ingest
+
+  sensor-ingestion:
+    environment:
+      MONGO_URL: mongodb://mongodb:27017
+      RABBITMQ_URL: amqp://rabbitmq:5672
+    build: ../services/sensor-ingestion
+    container_name: campus-sensor-ingestion
+    restart: unless-stopped
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mongodb
+      - rabbitmq
+
+  mongodb:
+    image: mongo:8
+    container_name: campus-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: CampusSecurityDB
+    volumes:
+      - ./mongodb/data:/data/db
+      - ./mongodb/init:/docker-entrypoint-initdb.d
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: campus-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  fire-detection:
+    build: ../services/fire-detection
+    container_name: campus-fire-detection
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBITMQ_URL: amqp://rabbitmq:5672
+  
+  water-leak-detection:
+    build:
+      context: ../services/water-leak-detection
+    container_name: campus-water-leak-detection
+    environment:
+      RABBITMQ_URL: amqp://rabbitmq:5672
+    depends_on:
+      - rabbitmq
+  alarm-service:
+    build: ../services/alarm-service
+    container_name: campus-alarm-service
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBITMQ_URL: amqp://rabbitmq:5672
+      MONGO_URL: mongodb://mongodb:27017
+      DB_NAME: CampusSecurityDB
+
+  web-ui:
+    build: ../services/web-ui
+    container_name: campus-web-ui
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+
+  web-api:
+    build: ../services/web-api
+    container_name: campus-web-api
+    restart: unless-stopped
+    ports:
+      - "3003:3003"
+    depends_on:
+      - mongodb
+    environment:
+      PORT: 3003
+      MONGO_URL: mongodb://mongodb:27017
+      DB_NAME: CampusSecurityDB
+
+  status-service:
+    build: ../services/status-service
+    container_name: campus-status-service
+    environment:
+      RABBITMQ_URL: amqp://rabbitmq:5672
+      MONGO_URL: mongodb://mongodb:27017
+      DB_NAME: CampusSecurityDB
+    depends_on:
+      - rabbitmq
+      - mongodb

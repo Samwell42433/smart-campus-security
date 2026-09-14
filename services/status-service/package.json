@@ -1,0 +1,9 @@
+{
+    "name": "status-service",
+    "version": "1.0.0",
+    "main": "index.js",
+    "dependencies": {
+        "amqplib": "^0.10.9",
+        "mongodb": "^6.18.0"
+    }
+}

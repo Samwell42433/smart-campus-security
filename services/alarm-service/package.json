@@ -1,0 +1,9 @@
+{
+  "name": "alarm-service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "amqplib": "^0.10.8",
+    "mongodb": "^7.5.0"
+  }
+}

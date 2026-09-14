@@ -1,0 +1,14 @@
+.sensor-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.sensor-row:last-child {
+    border-bottom: none;
+}
+
+.card {
+    margin-bottom: 20px;
+}

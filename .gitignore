@@ -1,0 +1,24 @@
+# Node.js dependencies
+node_modules/
+
+# Environment files
+.env
+.env.*
+
+# MongoDB database files
+infrastructure/mongodb/data/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/editor files
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp

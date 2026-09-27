@@ -34,10 +34,6 @@ docker compose up -d --build
 All services are containerized using Docker.
 Docker Compose is used to build, configure, network, and run the complete system.
 
-7. Kubernetes Deployment
-
-Kubernetes can be used as an alternative deployment platform for the system.
-It provides container orchestration, service management, scaling, and improved fault tolerance.
 
 8. Repository Structure
 
